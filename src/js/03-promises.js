@@ -8,12 +8,19 @@ const refs = {
 refs.submitBtn.addEventListener("click", onSubmitBtnClick);
 
 function createPromise(position, delay) {
-	const shouldResolve = Math.random() > 0.3;
-	if (shouldResolve) {
-		resolve(); // Fulfill
-	} else {
-		// Reject
-	}
+	return new Promise((resolve, reject) => {
+		setInterval(() => {
+			const shouldResolve = Math.random() > 0.3;
+			if (shouldResolve) {
+				resolve(() => {
+					console.log("✅ Fulfilled promise");
+					return { position, delay };
+				}); // Fulfill
+			} else {
+				reject(`❌ Rejected promise `); // Fulfill// Reject
+			}
+		}, delay);
+	});
 }
 
 function onSubmitBtnClick(evt) {
@@ -21,7 +28,21 @@ function onSubmitBtnClick(evt) {
 	const delay = refs.form.delay.value;
 	const step = refs.form.step.value;
 	const amount = refs.form.amount.value;
-	console.log({ delay, step, amount });
+	for (let index = 1; index <= amount; index += 1) {
+		console.log(index);
+		let time = delay;
+		if (index != 1) {
+			time = delay + step * index;
+		}
+		createPromise(index, time)
+			.then(({ position, delay }) => {
+				console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+			})
+			.catch((error) => console.log(error));
+	}
+	// createPromise(position, delay)
+	// 	.then((result) => console.log(result))
+	// 	.catch((err) => console.log(err));
 }
 
 // createPromise(2, 1500)
